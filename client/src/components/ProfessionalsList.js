@@ -13,8 +13,8 @@ const ProfessionalsList = ({ professionals }) => {
                       <Card.Title>{professional.name}</Card.Title>
                       <Card.Subtitle>{professional.company}</Card.Subtitle>
                       <Card.Text>
-                          Address: {professional.address} <br />
-                          Phone: {professional.phone}
+                          Addresse : {professional.address} <br />
+                          Téléphone : {professional.phone}
                       </Card.Text>
                       {professional.rating && (
                           <div>
