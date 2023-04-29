@@ -1,32 +1,33 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
-import AuthorList from './/components/AuthorList';
+import ProfessionalsList from './/components/ProfessionalsList';
+import CitySearch from './/components/CitySearch';
 import ReactGA from 'react-ga';
-  const TRACKING_ID = "UA-252982642-2"; 
+  const TRACKING_ID = "XXXX"; 
   ReactGA.initialize(TRACKING_ID);
   ReactGA.pageview(window.location.pathname + window.location.search);
 
 const App = () => {
-  const [name, setName] = useState('');
-  const [authors, setAuthors] = useState([]);
+  const [professionals, setProfessionals] = useState([]);
+  const [cityValue, setCityValue] = useState('');
+  const [postalCodeValue, setPostalCodeValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT
-
 
   const handleSubmit = event => {
     event.preventDefault();
     // Track Submit in GA
     ReactGA.event({
       category: 'Submit',
-      action: 'Submitted an author'
+      action: 'Submitted a city'
     });  
     // Set isLoading to true before sending the request
     setIsLoading(true);
-    axios.get(`${API_ENDPOINT}/api/authors?name=${name}`)
+    axios.get(`${API_ENDPOINT}/api/dpe?city=${cityValue}&postalcode=${postalCodeValue}`)
       .then(response => {
         // Update the response state with the server's response
-        setAuthors(response.data);
+        setProfessionals(response.data);
         // Set isLoading to false
         setIsLoading(false);
         // Reset isLoading to false after the response has been displayed
@@ -38,14 +39,15 @@ const App = () => {
   };
 
   return (
+
     <Container>
       <Row className="justify-content-center mt-5">
         <Col xs={12} md={6}>
-          <h1 className="text-center mb-3">Rechercher un auteur</h1>
-          <p className="text-center mb-5">Entrer un nom pour rechercher si son oeuvre est dans le domaine public en France</p>
+          <h1 className="text-center mb-3">Rechercher un professionnel certifié DPE</h1>
+          <p className="text-center mb-5">Saisissez une commune pour trouver un professionnel certifié pour réaliser un DPE</p>
           <Form onSubmit={handleSubmit}>
             <Form.Group>
-              <Form.Control type="text" value={name} onChange={event => setName(event.target.value)} />
+            <CitySearch setCity={setCityValue} setPostalCode={setPostalCodeValue} />
             </Form.Group>
             <div className="text-center"style={{ marginTop: "5px", }}>
             <Button type="submit" variant="primary">Rechercher</Button>
@@ -60,7 +62,7 @@ const App = () => {
 
                 <Container>
                     <Row>
-                      <Col className="text-center">Loading...</Col>
+                      <Col className="text-center">Chargement..</Col>
                     </Row>
                 </Container>
 
@@ -69,9 +71,9 @@ const App = () => {
               ) : (
 
               <div>
-                {authors ? (
+                {professionals ? (
                   <Container style={{ marginTop: '20px' }}>
-                    {authors.length > 0 && <AuthorList authors={authors} />}
+                    {professionals.length > 0 && <ProfessionalsList professionals={professionals} />}
                   </Container>
                 ) : null}
               </div>
